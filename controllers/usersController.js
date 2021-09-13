@@ -47,18 +47,29 @@ exports.getUser = async () => {
     return userFiltered
 }
 
+exports.getUserById = async (id) => {
+    return User.findOne({_id:id})
+}
+
 exports.addUser = async (req, res) => {
+    if(req.user.role != "Admin"){
+        res.status(400).send({"message": "Unauthorized access"})
+        return 0
+    }
+
     const {email, name, password, role} = req.body
 
     // Check if request incomplete
     if(!(email && password && name && role)){
         res.status(400).send({"message": "Body request incomplete"})
+        return 0
     }
 
     // Check if User Already Exist
     const checkedUser = await User.findOne({email})
     if(checkedUser){
         res.status(409).send({"message": "User Already exist."})
+        return 0
     }
 
     const user = new User({
@@ -82,6 +93,11 @@ exports.addUser = async (req, res) => {
 }
 
 exports.updateUser = async (req, res) => {
+    if(req.user.role != "Admin"){
+        res.status(400).send({"message": "Unauthorized access"})
+        return 0
+    }
+
     try{
         const { id } = req.params
         const {email, name, password, role} = req.body
@@ -114,6 +130,11 @@ exports.updateUser = async (req, res) => {
 }
 
 exports.deleteUser = async (req, res) => {
+    if(req.user.role != "Admin"){
+        res.status(400).send({"message": "Unauthorized access"})
+        return 0
+    }
+
     try{
         const { id } = req.params
 
