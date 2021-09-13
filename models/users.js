@@ -4,7 +4,8 @@ const Users = new mongoose.Schema({
     email: { type: String, unique: true },
     password: { type: String},
     name: { type: String, default: null },
-    role: { type: String}
+    role: { type: String},
+    token: { type: String}
 }, { timestamps: {} })
 
 module.exports = mongoose.model("users", Users)
