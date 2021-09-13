@@ -52,8 +52,7 @@ exports.getUserById = async (id) => {
 }
 
 exports.addUser = async (req, res) => {
-    if(req.user.role != "Admin"){
-        res.status(400).send({"message": "Unauthorized access"})
+    if(!authorized(req, res, "INSERT")){
         return 0
     }
 
@@ -93,8 +92,7 @@ exports.addUser = async (req, res) => {
 }
 
 exports.updateUser = async (req, res) => {
-    if(req.user.role != "Admin"){
-        res.status(400).send({"message": "Unauthorized access"})
+    if(!authorized(req, res, "UPDATE")){
         return 0
     }
 
@@ -129,9 +127,24 @@ exports.updateUser = async (req, res) => {
     }
 }
 
+const authorized = (req, res, access) => {
+    let status = 1
+    try{
+        if(req.user.role != "Admin"){
+            console.log(`Unauthorized ${access} access by ${req.user.email}-${req.user.user_id} on Users API`)
+            res.status(400).send({"message": "Unauthorized access"})
+            status = 0
+        }
+    }catch(e){
+        console.log(e)
+        res.status(500).send({"message": "Invalid token, please login to get access token"})
+        status = 0
+    }
+    return status
+}
+
 exports.deleteUser = async (req, res) => {
-    if(req.user.role != "Admin"){
-        res.status(400).send({"message": "Unauthorized access"})
+    if(!authorized(req, res, "DELETE")){
         return 0
     }
 
