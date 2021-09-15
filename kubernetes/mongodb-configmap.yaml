@@ -3,7 +3,7 @@ kind: ConfigMap
 metadata:
   name: mongodb-config
   labels:
-    group: credentialapp
+    group: db
 data:
   MONGO_INITDB_ROOT_USERNAME: ilham
   MONGO_INITDB_ROOT_PASSWORD: inipassword

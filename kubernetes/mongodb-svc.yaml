@@ -3,7 +3,7 @@ kind: Service
 metadata:
   name: mongodb
   labels:
-    group: credentialapp
+    group: db
 spec:
   type: ClusterIP
   selector:

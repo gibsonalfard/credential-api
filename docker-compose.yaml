@@ -31,12 +31,3 @@ services:
       MONGODB_PORT: 27017
       TOKEN_KEY: nodejsexpressjwt
       API_PORT: 8080
-
-        - name: MONGODB_HOST
-            value: mongodb
-              - name: MONGODB_PORT
-            value: 27017
-                     - name: TOKEN_KEY
-                     value: nodeexpressjwt
-                     - name: API_PORT
-                       value: 8080

@@ -7,25 +7,25 @@ const User = require("../models/users")
 exports.login = async (req, res) => {
     try{
         // Get Body Request
-        const {email, password} = req.body
+        const {username, password} = req.body
 
         // Validate input
-        if (!(email && password)){
+        if (!(username && password)){
             res.status(400).send({"message": "Bad Request, All input is required"})
         }
 
-        const user = await User.findOne({ email })
+        const user = await User.findOne({ username })
 
         if(user && (await bcrypt.compare(password, user.password))){
             // Create access token
             const token = jwt.sign({
-                user_id: user._id, email, role: user.role
+                user_id: user._id, username, role: user.role
             }, process.env.TOKEN_KEY, { expiresIn: "2h"})
 
             user.token = token
             res.status(200).json({
                 id: user._id,
-                email: user.email,
+                username: user.username,
                 name: user.name,
                 role: user.role,
                 token: user.token
@@ -42,7 +42,7 @@ exports.login = async (req, res) => {
 exports.getUser = async () => {
     const user = await User.find({})
     const userFiltered = user.map(
-        ({_id,email, name, role}) => ({id: _id, email, name, role})
+        ({_id,username, name, role}) => ({id: _id, username, name, role})
     )
     return userFiltered
 }
@@ -56,23 +56,23 @@ exports.addUser = async (req, res) => {
         return 0
     }
 
-    const {email, name, password, role} = req.body
+    const {username, name, password, role} = req.body
 
     // Check if request incomplete
-    if(!(email && password && name && role)){
+    if(!(username && password && name && role)){
         res.status(400).send({"message": "Body request incomplete"})
         return 0
     }
 
     // Check if User Already Exist
-    const checkedUser = await User.findOne({email})
+    const checkedUser = await User.findOne({username})
     if(checkedUser){
         res.status(409).send({"message": "User Already exist."})
         return 0
     }
 
     const user = new User({
-        email: email,
+        username: username,
         name: name,
         password: await bcrypt.hash(password, 10),
         role: role
@@ -81,10 +81,11 @@ exports.addUser = async (req, res) => {
     user.save().then(data => {
         res.status(200).json({
             id: data._id,
-            email: data.email,
+            username: data.username,
             name: data.name,
             role: data.role})
     }).catch(err => {
+        console.log(err)
         res.status(500).send({
             message: "Failed to save data to database"
         });
@@ -98,11 +99,11 @@ exports.updateUser = async (req, res) => {
 
     try{
         const { id } = req.params
-        const {email, name, password, role} = req.body
+        const {username, name, password, role} = req.body
 
         const user = await User.findById(id)
 
-        user.email = email || user.email
+        user.username = username || user.username
         user.name = name || user.name
         user.password = await bcrypt.hash(password, 10) || user.password
         user.role = role || user.role
@@ -111,10 +112,11 @@ exports.updateUser = async (req, res) => {
             res.status(200).json({
                 id: data._id,
                 name: data.name,
-                email: data.email,
+                username: data.username,
                 role: data.role
             })
         }).catch(err => {
+            console.log(err)
             res.status(500).send({
                 message: "Failed to update data to database"
             });
@@ -131,7 +133,7 @@ const authorized = (req, res, access) => {
     let status = 1
     try{
         if(req.user.role != "Admin"){
-            console.log(`Unauthorized ${access} access by ${req.user.email}-${req.user.user_id} on Users API`)
+            console.log(`Unauthorized ${access} access by ${req.user.username}-${req.user.user_id} on Users API`)
             res.status(400).send({"message": "Unauthorized access"})
             status = 0
         }
