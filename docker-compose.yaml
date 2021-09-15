@@ -1,0 +1,33 @@
+version: "3.8"
+
+networks:
+  credential-network:
+
+services:
+  mongodb_credential:
+    build: ./mongodb
+    container_name: mongodb_credential
+    ports:
+      - 27017:27017
+    networks:
+      - credential-network
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ilham
+      MONGO_INITDB_ROOT_PASSWORD: inipassword
+      MONGO_INITDB_DATABASE: credentialdb
+
+  credential_api:
+    build: .
+    container_name: credential_api
+    ports:
+      - 8080:8080
+    networks:
+      - credential-network
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ilham
+      MONGO_INITDB_ROOT_PASSWORD: inipassword
+      MONGO_INITDB_DATABASE: credentialdb
+      MONGODB_HOST: mongodb_credential
+      MONGODB_PORT: 27017
+      TOKEN_KEY: nodejsexpressjwt
+      API_PORT: 8080
