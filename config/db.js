@@ -9,6 +9,10 @@ const {
 } = process.env
 const MONGO_URI = `mongodb://${MONGO_INITDB_ROOT_USERNAME}:${MONGO_INITDB_ROOT_PASSWORD}@${MONGODB_HOST}:${MONGODB_PORT}`
 
+/*
+Using an environment variable, a MongoDB connection to a specific URI is established.
+Environment variables can be set up in your operating system using the.env file or the export command.
+*/
 exports.connect = () => {
     mongoose.connect(MONGO_URI, {
         useNewUrlParser: true,

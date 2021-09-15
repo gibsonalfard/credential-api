@@ -4,6 +4,13 @@ const jwt = require("jsonwebtoken")
 
 const User = require("../models/users")
 
+
+/*
+The login endpoint function is used to obtain an access token
+that can be used to make a request to another endpoint.
+This function obtains an access token by using the registered user's username and password.
+For the login user, JWT generates a dynamic token that expires in 2 hours.
+ */
 exports.login = async (req, res) => {
     try{
         // Get Body Request
@@ -39,6 +46,10 @@ exports.login = async (req, res) => {
     }
 }
 
+/*
+In JSON format, get a list of all registered users from the database.
+This function only returns the user's id, username, name, and role.
+ */
 exports.getUser = async () => {
     const user = await User.find({})
     const userFiltered = user.map(
@@ -47,10 +58,18 @@ exports.getUser = async () => {
     return userFiltered
 }
 
+/*
+Get JSON-formatted user data based on the user's id.
+This function only returns one database record.
+ */
 exports.getUserById = async (id) => {
     return User.findOne({_id:id})
 }
 
+/*
+Add user data to the database.This function determines whether or not a user already exists in the database.
+This function performs bcrypt hashing on the password obtained from the HTTP request body.
+ */
 exports.addUser = async (req, res) => {
     if(!authorized(req, res, "INSERT")){
         return 0
@@ -92,6 +111,12 @@ exports.addUser = async (req, res) => {
     })
 }
 
+/*
+To update user data in a database, use this method.
+This function reads data from the body of an HTTP request.
+It is not required to enter all data into the body request.
+You only need to enter the field that needs to be updated.
+ */
 exports.updateUser = async (req, res) => {
     if(!authorized(req, res, "UPDATE")){
         return 0
@@ -129,6 +154,10 @@ exports.updateUser = async (req, res) => {
     }
 }
 
+/*
+This function determines whether the user attempting to access an endpoint is authorized to do so.
+This function also keeps track of unauthorized access to the nodejs console for future reference.
+ */
 const authorized = (req, res, access) => {
     let status = 1
     try{
@@ -145,6 +174,9 @@ const authorized = (req, res, access) => {
     return status
 }
 
+/*
+Delete a user from the database based on their id.
+ */
 exports.deleteUser = async (req, res) => {
     if(!authorized(req, res, "DELETE")){
         return 0
