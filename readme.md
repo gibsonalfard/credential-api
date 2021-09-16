@@ -3,8 +3,9 @@ User credential application built with [Express.js](https://expressjs.com) and [
 
 ## Installation
 ### Run application using Node.js
-To run this application on your server, you'll need **npm**.
-Node.js and npm can be downloaded from the [node.js official website](https://nodejs.org/en/).
+To run this application on your server, you'll need to install **npm** and **MongoDB**.
+The [node.js official website](https://nodejs.org/en/) allows you to download Node.js and npm.
+The [MongoDB Website](https://docs.mongodb.com/manual/installation/) has instructions for installing MongoDB on your server.
 
 Install the dependencies needed to run this application with this command.
 ```bash
